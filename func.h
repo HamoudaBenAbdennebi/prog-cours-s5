@@ -1,27 +1,24 @@
-#ifndef PATIENT_H_INCLUDED
-#define PATIENT_H_INCLUDED
-
-typedef struct patient {
+#ifndef FONCTION_H_INCLUDED
+#define FONCTION_H_INCLUDED
+typedef struct
+{
     char nom[20];
     char prenom[20];
-    int rdv; // 0 si pas de rendez-vous, 1 si rendez-vous
-} Patient;
+    int rdv;
+}patient;
+typedef struct cellule Cellule;
+struct Cellule
+{
+    patient val;
+    struct cellule *suiv
+};
+typedef Cellule *liste;
+void saisir_patient(patient *p);
+void afficher_patient(patient p);
+liste ajout_patient(liste tete,patient p);
+void rendez_vous(liste tete,int *rdv , int *sansrdv);
+liste supprime_patient(liste tete);
+void consulter_salle_attente(liste tete);
 
-typedef struct cellule {
-    Patient p;
-    struct cellule *suivant;
-} Cellule;
 
-typedef Cellule* liste;
-
-void saisirPatient(Patient *p);
-void afficherPatient(Patient p);
-liste AjoutPatient(liste tete, Patient P);
-void RendezVous(liste tete, int *rdv, int *sansRdv);
-liste SupprimePatient(liste tete);
-void ConsulterSalleAttente(liste tete);
-void sauvegarderPatients(liste tete, char *chemin);
-liste recupererListePatients(char *chemin);
-int afficherMenu();
-
-#endif // PATIENT_H_INCLUDED
+#endif // FONCTION_H_INCLUDED

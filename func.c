@@ -1,166 +1,156 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include "func.h"
-
-void saisirPatient(Patient *p) {
-    printf("Saisir le nom du patient : ");
-    scanf("%s", p->nom);
-    printf("Saisir le prenom du patient : ");
-    scanf("%s", p->prenom);
-    printf("Le patient a-t-il un rendez-vous ? (0: non, 1: oui) ");
-    scanf("%d", &p->rdv);
+#include "fonction.h"
+void saisir_patient(patient *p)
+{
+    printf("donner le nom\n");
+    scanf("%s",p->nom);
+    printf("donner le prenom\n");
+    scanf("%s",p->prenom);
+    do{
+    printf("donner le rendez-vous\n");
+    scanf("%d",&(p)->rdv);
+    }while((p->rdv!=0) || (p->rdv!=1));
 }
-
-void afficherPatient(Patient p) {
-    printf("%s %s", p.nom, p.prenom);
-    if (p.rdv == 1) {
-        printf(" (avec rendez-vous)\n");
-    } else {
-        printf(" (sans rendez-vous)\n");
+void afficher_patient(patient p)
+{
+    printf("le nom %s",p.nom);
+    printf("\n");
+    printf("le prenom %s",p.prenom);
+    printf("\n");
+    if(p.rdv==0)
+    {
+    printf("patient sans rdv\n");
+    }
+    else
+    {
+    printf("patient avec rdv\n");
     }
 }
+liste ajout_patient(liste tete,patient p)
+{
 
-liste AjoutPatient(liste tete, Patient P) {
-    Cellule *new_cell = (Cellule*) malloc(sizeof(Cellule));
-    new_cell->p = P;
-    new_cell->suivant = NULL;
-
-    if (tete == NULL) {
-        tete = new_cell;
-    } else {
-        Cellule *courant = tete;
-        while (courant->suivant != NULL) {
-            courant = courant->suivant;
+struct Cellule *nouv,*parc;
+nouv=(struct Cellule*)malloc(sizeof(struct Cellule));
+nouv->val=p;
+nouv->suiv=NULL;
+if(tete==NULL)
+{
+    tete=nouv;
+}
+else
+{
+    while(parc->suiv !=NULL)
+        parc=parc->suiv;
+        parc->suiv=nouv;
+}
+return(tete);
+}
+void rendez_vous(liste tete,int *rdv , int *sansrdv)
+{
+    (*rdv)=0;
+    (*sansrdv)=0;
+    struct Cellule *tmp;
+    tmp=tete;
+        while(tmp!=NULL)
+        {
+            if(tmp->val.rdv==0)
+                (*sansrdv)++;
+            else
+                (*rdv)++;
+            tmp=tmp->suiv;
         }
-        courant->suivant = new_cell;
-    }
 
-    return tete;
 }
-
-void RendezVous(liste tete, int *rdv, int *sansRdv) {
-    *rdv = 0;
-    *sansRdv = 0;
-
-    Cellule *courant = tete;
-    while (courant != NULL) {
-        if (courant->p.rdv == 1) {
-            (*rdv)++;
-        } else {
-            (*sansRdv)++;
+liste supprime_patient(liste tete)
+{
+    liste p,q;
+    int *rdv,*sansrdv;
+    if(tete!=NULL)
+    {
+        rendez_vous(tete,&rdv,&sansrdv);
+        if(rdv==0)
+        {
+            p=tete;
+            tete=tete->suiv;
+            free(p);
         }
-        courant = courant->suivant;
-    }
-}
-//p2
-liste SupprimePatient(liste tete) {
-    // Vérifier si la liste est vide
-    if (tete == NULL) {
-        printf("La liste est vide.\n");
+        else
+        {
+            p=tete;
+            q=tete;
+            while(p->suiv!=NULL && p->val.rdv!=1)
+            {
+                q=p;
+                p=p->suiv;
+            }
+            if(p==tete)
+            {
+                tete=tete->suiv;
+                free(p);
+            }
+            else
+            {
+                q->suiv=p->suiv;
+                free(p);
+            }
+
+        }
         return tete;
     }
 
-    // Chercher le premier patient avec rendez-vous
-    Cellule* prec = NULL;
-    Cellule* cour = tete;
-    while (cour != NULL && cour->patient.rdv == 0) {
-        prec = cour;
-        cour = cour->suivant;
+}
+void consulter_salle_attente(liste tete)
+{
+    liste p;
+    if(tete==NULL)
+    {
+        printf("liste vide\n");
     }
+    else{
+        p=tete;
+        while(p!=NULL)
+        {
+            if(p->val.rdv==1)
+            {
+                printf("%s %s",p->val.nom,p->val.prenom);
 
-    // Si aucun patient n'a de rendez-vous, supprimer le premier patient de la liste
-    if (cour == NULL) {
-        Cellule* temp = tete;
-        tete = tete->suivant;
-        free(temp);
-    } else {  // Sinon, supprimer le premier patient avec rendez-vous
-        if (prec == NULL) {
-            tete = cour->suivant;
-        } else {
-            prec->suivant = cour->suivant;
+            }
+             p=p->suiv;
         }
-        free(cour);
-    }
-
-    return tete;
-}
-void ConsulterSalleAttente(liste tete) {
-    if (tete == NULL) {
-        printf("La salle d'attente est vide.\n");
-        return;
-    }
-
-    int i = 1;
-    printf("Patients avec rendez-vous :\n");
-    Cellule *p = tete;
-    while (p != NULL) {
-        if (p->patient.rdv == 1) {
-            printf("%d - ", i);
-            afficherPatient(p->patient);
-            i++;
+        p=tete;
+        while(p!=Null)
+        {
+            if(p->val.rdv==0)
+            {
+                prinntf("%s %s",p->val.nom,p->val.prenom);
+            }
+            p=p->suiv;
         }
-        p = p->suivant;
+
     }
 
-    i = 1;
-    printf("Patients sans rendez-vous :\n");
-    p = tete;
-    while (p != NULL) {
-        if (p->patient.rdv == 0) {
-            printf("%d - ", i);
-            afficherPatient(p->patient);
-            i++;
+}
+void sauvegarder_patient(liste tete, char *chemin)
+{
+    liste p;
+    FILE *f=NULL;
+    f=fopen("chemin.txt","a");
+    if(f!=NULL)
+    {
+        if(tete==NULL)
+            printf("liste vide\n");
+        else{
+            p=tete;
+            while(p!=NULL){
+        fprintf("%s %s %d",p->val.nom,p->val.prenom,p->val.rdv);
+        p=p->suiv;}
         }
-        p = p->suivant;
+        fclose(f);
     }
-}
-void sauvegarderPatients(liste tete, char *chemin) {
-    FILE *fichier = fopen(chemin, "w");
-    if (fichier == NULL) {
-        printf("Erreur : impossible d'ouvrir le fichier %s.\n", chemin);
-        return;
+    else
+    {
+        printf("impossible d'ouvrir le fichier\n");
     }
 
-    Cellule *courant = tete;
-    while (courant != NULL) {
-        fprintf(fichier, "%s %s %d\n", courant->patient.nom, courant->patient.prenom, courant->patient.rdv);
-        courant = courant->suivant;
-    }
-
-    fclose(fichier);
-}
-liste recupererListePatients(liste tete, char* chemin) {
-    FILE* fichier = fopen(chemin, "r");
-    if (fichier == NULL) {
-        fprintf(stderr, "Erreur : impossible d'ouvrir le fichier %s\n", chemin);
-        return tete;
-    }
-
-    Patient p;
-    while (fscanf(fichier, "%s %s %d", p.nom, p.prenom, &p.rdv) == 3) {
-        tete = AjoutPatient(tete, p);
-    }
-
-    fclose(fichier);
-    return tete;
-}
-int afficherMenu() {
-    int choix;
-    printf("=== Cabinet Medical ===\n");
-    printf("1. Ajouter un patient\n");
-    printf("2. Afficher les patients\n");
-    printf("3. Ajouter un rendez-vous\n");
-    printf("4. Supprimer un patient\n");
-    printf("5. Consulter la salle d'attente\n");
-    printf("6. Sauvegarder la liste des patients\n");
-    printf("7. Charger la liste des patients\n");
-    printf("0. Quitter\n");
-
-    do {
-        printf("\nEntrez votre choix : ");
-        scanf("%d", &choix);
-    } while (choix < 0 || choix > 7);
-
-    return choix;
 }
